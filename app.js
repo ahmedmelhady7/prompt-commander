@@ -261,6 +261,12 @@ class PromptCommander {
         this.autoSave();
         this.updatePreview();
         this.updateUsage();
+        // GoatCounter: record a pageview if the script is loaded
+        try {
+            if (window.goatcounter && typeof window.goatcounter.count === 'function') {
+                window.goatcounter.count();
+            }
+        } catch (e) { /* noop */ }
     }
 
     setupEventListeners() {
@@ -280,6 +286,9 @@ class PromptCommander {
         document.getElementById('newPromptBtn').addEventListener('click', (e) => {
             e.preventDefault();
             this.newPrompt();
+            if (window.goatcounter && typeof window.goatcounter.count === 'function') {
+                window.goatcounter.count({ event: 'new_prompt' });
+            }
         });
         
         document.getElementById('loadTemplateBtn').addEventListener('click', (e) => {
@@ -295,6 +304,9 @@ class PromptCommander {
         document.getElementById('exportBtn').addEventListener('click', (e) => {
             e.preventDefault();
             this.exportPrompt();
+            if (window.goatcounter && typeof window.goatcounter.count === 'function') {
+                window.goatcounter.count({ event: 'export_prompt' });
+            }
         });
         
         document.getElementById('copyPromptBtn').addEventListener('click', (e) => {
