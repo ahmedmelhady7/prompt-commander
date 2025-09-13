@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Commander - AI Prompt Engineering Terminal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Terminal Header -->
+    <header class="terminal-header">
+        <div class="terminal-title-bar">
+            <div class="terminal-buttons">
+                <div class="terminal-button red"></div>
+                <div class="terminal-button yellow"></div>
+                <div class="terminal-button green"></div>
+            </div>
+            <div class="terminal-title">Prompt Commander v2.0.1</div>
+        </div>
+        <div class="terminal-prompt">
+            <span class="prompt-symbol">$</span>
+            <span class="typing-animation" id="welcomeText"></span>
+            <span class="cursor">|</span>
+        </div>
+    </header>
+
+    <!-- Main Application -->
+    <main class="container">
+        <!-- Controls Panel -->
+        <div class="controls-panel">
+            <div class="control-row">
+                <div class="framework-selector">
+                    <label class="form-label">Framework:</label>
+                    <select id="frameworkSelect" class="form-control terminal-select">
+                        <option value="addy">Addy's 10-Part Structure</option>
+                        <option value="costar">COSTAR</option>
+                        <option value="crispe">CRISPE</option>
+                        <option value="rtf">RTF</option>
+                        <option value="bab">BAB</option>
+                    </select>
+                </div>
+                <div class="pattern-selector">
+                    <label class="form-label">Context Pattern:</label>
+                    <select id="patternSelect" class="form-control terminal-select">
+                        <option value="write">Write Context</option>
+                        <option value="select">Select Context</option>
+                        <option value="compress">Compress Context</option>
+                        <option value="isolate">Isolate Context</option>
+                    </select>
+                </div>
+                <div class="model-selector">
+                    <label class="form-label">Target Model:</label>
+                    <select id="modelSelect" class="form-control terminal-select">
+                        <option value="gpt4">GPT-4 (128k)</option>
+                        <option value="claude">Claude (200k)</option>
+                        <option value="gpt35">GPT-3.5 (16k)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-row">
+                <button class="btn btn--primary" id="newPromptBtn">
+                    <span class="btn-icon">></span> New Prompt
+                </button>
+                <button class="btn btn--secondary" id="loadTemplateBtn">
+                    <span class="btn-icon">↑</span> Load Template
+                </button>
+                <button class="btn btn--secondary" id="saveTemplateBtn">
+                    <span class="btn-icon">↓</span> Save Template
+                </button>
+                <button class="btn btn--outline" id="exportBtn">
+                    <span class="btn-icon">⟶</span> Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Context Usage Bar -->
+        <div class="context-usage">
+            <div class="usage-header">
+                <span class="usage-label">Context Usage:</span>
+                <span class="usage-stats" id="usageStats">0 / 128,000 tokens (0%)</span>
+            </div>
+            <div class="usage-bar">
+                <div class="usage-fill" id="usageFill"></div>
+                <div class="usage-optimal-line"></div>
+            </div>
+            <div class="usage-legend">
+                <span class="legend-item">
+                    <span class="legend-color optimal"></span> Optimal (≤50%)
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color warning"></span> Warning (50-80%)
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color danger"></span> Danger (>80%)
+                </span>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Prompt Builder -->
+            <div class="prompt-builder">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="prompt-symbol">$</span> prompt_builder --framework=addy
+                    </h2>
+                    <div class="section-controls">
+                        <button class="btn btn--sm btn--outline" id="collapseAllBtn">Collapse All</button>
+                        <button class="btn btn--sm btn--outline" id="expandAllBtn">Expand All</button>
+                    </div>
+                </div>
+                
+                <div id="promptSections" class="prompt-sections">
+                    <!-- Dynamic sections will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="preview-panel">
+                <div class="panel-header">
+                    <h3 class="panel-title">
+                        <span class="prompt-symbol">$</span> preview --live
+                    </h3>
+                    <div class="panel-controls">
+                        <button class="btn btn--sm btn--primary" id="copyPromptBtn">
+                            <span class="btn-icon">⎘</span> Copy
+                        </button>
+                    </div>
+                </div>
+                <div class="preview-content">
+                    <pre><code id="previewText" class="language-text">// Your prompt will appear here as you build it...</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h4 class="sidebar-title">
+                    <span class="prompt-symbol">$</span> best_practices
+                </h4>
+                <ul class="practices-list" id="practicesList">
+                    <!-- Dynamic best practices -->
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <h4 class="sidebar-title">
+                    <span class="prompt-symbol">$</span> shortcuts
+                </h4>
+                <div class="shortcuts-list">
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>S</kbd> <span>Save</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>Enter</kbd> <span>Preview</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>C</kbd> <span>Copy</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Esc</kbd> <span>Clear Focus</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4 class="sidebar-title">
+                    <span class="prompt-symbol">$</span> templates
+                </h4>
+                <div class="templates-list" id="templatesList">
+                    <div class="template-item">No saved templates</div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Modal for Template Management -->
+    <div class="modal hidden" id="templateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Template Manager</h3>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Template Name:</label>
+                    <input type="text" class="form-control" id="templateName" placeholder="Enter template name...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description:</label>
+                    <textarea class="form-control" id="templateDescription" rows="3" placeholder="Optional description..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--secondary" id="cancelModalBtn">Cancel</button>
+                <button class="btn btn--primary" id="saveModalBtn">Save Template</button>
+            </div>
+        </div>
+        <div class="modal-backdrop"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
